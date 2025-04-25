@@ -21,7 +21,17 @@ public class Cliente {
         saida.println(senha);
 
         String respostaLogin = entrada.readLine();
-        System.out.println("Retorno do servidor: " + respostaLogin);
+        System.out.println("Resposta do servidor: " + respostaLogin);
+
+        if (respostaLogin.equals("Login bem-sucedido.")) {
+            System.out.println();
+            System.out.println("Arquivos no servidor:");
+
+            String linha;
+            while ((linha = entrada.readLine()) != null && !linha.isEmpty()) {
+                System.out.println(linha);
+            }
+        }
 
         cliente.close();
     }

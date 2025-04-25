@@ -51,6 +51,20 @@ public class Servidor {
                     }
                 }
             }
+            for (String tipo : tipos) {
+                File local = new File(localUsuario + "/" + tipo);
+                String[] arquivos = local.list();
+
+                saida.println("Tipo de arquivo: " + tipo);
+
+                if (arquivos != null && arquivos.length > 0) {
+                    for (String arquivo : arquivos) {
+                        saida.println(" - " + arquivo);
+                    }
+                } else {
+                    saida.println(" (nenhum arquivo encontrado)");
+                }
+            }
         } else {
             saida.println("Falha ao login.");
         }
