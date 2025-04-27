@@ -45,6 +45,7 @@ public class Servidor {
                     }
                 }
             }
+
             for (String tipo : tipos) {
                 File local = new File(localUsuario + "/" + tipo);
                 String[] arquivos = local.list();
@@ -58,9 +59,43 @@ public class Servidor {
                     saida.println(" (nenhum arquivo encontrado)");
                 }
             }
-        saida.println("Fim");
-        saida.flush();
 
+            saida.println("Fim");
+            saida.flush();
+
+            String comando;
+            while ((comando = entrada.readLine()) != null) {
+                if (comando.equalsIgnoreCase("Download")) {
+                    String nomeArquivo = entrada.readLine();
+                    File arquivo = null;
+
+                    for (String tipo : tipos) {
+                        File possivel = new File(localUsuario + "/" + tipo + "/" + nomeArquivo);
+                        if (possivel.exists()) {
+                            arquivo = possivel;
+                            break;
+                        }
+                    }
+
+                    DataOutputStream dataOut = new DataOutputStream(cliente.getOutputStream());
+                    if (arquivo != null) {
+                        dataOut.writeLong(arquivo.length());
+
+                        FileInputStream fis = new FileInputStream(arquivo);
+                        byte[] buffer = new byte[4096];
+                        int bytesLidos;
+                        while ((bytesLidos = fis.read(buffer)) != -1) {
+                            dataOut.write(buffer, 0, bytesLidos);
+                        }
+                        fis.close();
+
+                        System.out.println("Arquivo '" + nomeArquivo + "' enviado com sucesso.");
+                    } else {
+                        dataOut.writeLong(-1);
+                        System.out.println("Arquivo '" + nomeArquivo + "' não encontrado.");
+                    }
+                }
+            }
         } else {
             saida.println("Falha ao login.");
         }
