@@ -8,21 +8,18 @@ public class Servidor {
         Socket cliente = servidor.accept();
         System.out.println("Cliente conectado.");
 
-        //canais de entrada e saída na comunicação entre cliente e servidor.
         BufferedReader entrada = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
         PrintWriter saida = new PrintWriter(cliente.getOutputStream(), true);
 
         String nome = entrada.readLine();
         String senha = entrada.readLine();
 
-        //grupo de usuários cadastrados usando arrays.
         String[][] usuarios = {
                 {"emerson", "170506"},
                 {"janaina", "310797"},
                 {"acad", "acad"}
         };
 
-        //padrão para login definido como inválido.
         boolean loginValido = false;
 
         for (String[] usuario : usuarios) {
@@ -35,14 +32,11 @@ public class Servidor {
         if (loginValido) {
             saida.println("Login bem-sucedido.");
 
-            //após o login, criação de pasta do usuário e subpastas no servidor.
             String localUsuario = "usuarios/" + nome;
             String[] tipos = {"pdf", "jpg", "txt"};
 
             for (String tipo : tipos) {
                 File local = new File(localUsuario + "/" + tipo);
-
-                //verificar se a pasta do usuário já existe e, se não, criá-la.
                 if (!local.exists()) {
                     if (local.mkdirs()) {
                         System.out.println("Local criado: " + local.getPath());
@@ -56,7 +50,6 @@ public class Servidor {
                 String[] arquivos = local.list();
 
                 saida.println("Tipo de arquivo: " + tipo);
-
                 if (arquivos != null && arquivos.length > 0) {
                     for (String arquivo : arquivos) {
                         saida.println(" - " + arquivo);
@@ -65,6 +58,9 @@ public class Servidor {
                     saida.println(" (nenhum arquivo encontrado)");
                 }
             }
+        saida.println("Fim");
+        saida.flush();
+
         } else {
             saida.println("Falha ao login.");
         }

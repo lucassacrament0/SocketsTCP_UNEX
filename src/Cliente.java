@@ -28,11 +28,38 @@ public class Cliente {
             System.out.println("Arquivos no servidor:");
 
             String linha;
-            while ((linha = entrada.readLine()) != null && !linha.isEmpty()) {
+            while ((linha = entrada.readLine()) != null && !linha.equals("Fim")) {
                 System.out.println(linha);
             }
         }
+        System.out.print("\nDeseja baixar um arquivo do servidor? (s/n): ");
+        String opcaoDownload = scanner.nextLine();
+        if (opcaoDownload.equalsIgnoreCase("s")) {
+            System.out.print("Digite o nome exato do arquivo (com extensão): ");
+            String nomeArquivoDownload = scanner.nextLine();
 
-        cliente.close();
+            saida.println("Download");
+            saida.println(nomeArquivoDownload);
+
+            DataInputStream dataIn = new DataInputStream(cliente.getInputStream());
+            long tamanho = dataIn.readLong();
+
+            if (tamanho == -1) {
+                System.out.println("Arquivo não encontrado no servidor.");
+            } else {
+                FileOutputStream fos = new FileOutputStream("download_" + nomeArquivoDownload);
+                byte[] buffer = new byte[4096];
+                int bytesLidos;
+                long totalRecebido = 0;
+
+                while (totalRecebido < tamanho && (bytesLidos = dataIn.read(buffer, 0, (int) Math.min(buffer.length, tamanho - totalRecebido))) != -1) {
+                    fos.write(buffer, 0, bytesLidos);
+                    totalRecebido += bytesLidos;
+                }
+                fos.close();
+                System.out.println("Download concluído. Arquivo salvo como: download_" + nomeArquivoDownload);
+            }
+            cliente.close();
+        }
     }
 }
