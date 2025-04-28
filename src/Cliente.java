@@ -61,7 +61,38 @@ public class Cliente {
                 fos.close();
                 System.out.println("Download concluído. Arquivo salvo como: downloaded_" + nomeArquivoDownload);
             }
-            cliente.close();
         }
+        System.out.println();
+        System.out.print("Deseja fazer upload de (enviar) um arquivo para o servidor? (s/n): ");
+        String opcaoUpload = scanner.nextLine();
+        if (opcaoUpload.equalsIgnoreCase("s")) {
+            System.out.print("Digite o caminho do arquivo que deseja enviar (arquivos_cliente/...): ");
+            String caminhoArquivo = scanner.nextLine();
+
+            File arquivo = new File(caminhoArquivo);
+            if (!arquivo.exists()) {
+                System.out.println("Arquivo não encontrado.");
+                return;
+            }
+
+            saida.println("Upload");
+
+            saida.println(arquivo.getName());
+
+            dataOut.writeLong(arquivo.length());
+
+            FileInputStream fis = new FileInputStream(arquivo);
+            byte[] buffer = new byte[4096];
+            int bytesLidos;
+            while ((bytesLidos = fis.read(buffer)) != -1) {
+                dataOut.write(buffer, 0, bytesLidos);
+            }
+            fis.close();
+
+            System.out.println("Upload (envio) concluído.");
+        } else {
+        System.out.println("Nenhum arquivo disponível.");
+        }
+        cliente.close();
     }
 }
