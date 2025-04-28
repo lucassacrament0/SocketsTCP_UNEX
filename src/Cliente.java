@@ -93,6 +93,10 @@ public class Cliente {
         } else {
         System.out.println("Nenhum arquivo disponível.");
         }
+
+        System.out.println();
+        System.out.println("Conexão encerrada.");
+        scanner.close();
         cliente.close();
     }
 }
